@@ -1,0 +1,22 @@
+<mat-drawer-container class="h-100">
+  <mat-drawer mode="side" opened disableClose>
+    <div fxLayout="column" class="p-1">
+      <button class="m-1" mat-icon-button matTooltip="Создать нейронную сеть" (click)="onBuildInstanceClick()">
+        <mat-icon>build</mat-icon>
+      </button>
+      <button class="m-1" mat-icon-button matTooltip="Обучить нейронную сеть" (click)="onTrainInstanceClick()">
+        <mat-icon>scatter_plot</mat-icon>
+      </button>
+      <button class="m-1" mat-icon-button matTooltip="Активировать нейронную сеть"
+        (click)="onActivateInstanceClick()">
+        <mat-icon>share</mat-icon>
+      </button>
+      <button class="m-1" mat-icon-button matTooltip="Обновить нейронную сеть" (click)="getInstance()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </mat-drawer>
+  <mat-drawer-content>
+    <graph class="h-100" [nodes]="nodes" [links]="links"></graph>
+  </mat-drawer-content>
+</mat-drawer-container>

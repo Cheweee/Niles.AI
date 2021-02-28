@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>Опции построения нейронной сети</h2>
+<mat-dialog-content class="mh-300">
+    <div *ngIf="!layersBuildOptions.length" fxLayout="row" fxLayoutAlign="center center" class="text-muted">Вы еще не
+        добавили слои</div>
+    <form *ngIf="layersBuildOptions.length" [formGroup]="form">
+        <span>Слои нейронной сети</span>
+        <div *ngFor="let options of layersBuildOptions; let i = index" fxLayout="row">
+            <mat-form-field class="w-100 mr-1">
+                <mat-label>Название</mat-label>
+                <input matInput type="text" placeholder="Название нейронного слоя" formControlName="layerName{{i}}">
+            </mat-form-field>
+            <mat-form-field class="w-100">
+                <mat-label>Количество нейронов</mat-label>
+                <input matInput type="text" placeholder="Название нейронного слоя" formControlName="neuronsCount{{i}}">
+            </mat-form-field>
+            <button mat-icon-button (click)="onDeleteLayerOptionsClick(i)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </div>
+    </form>
+</mat-dialog-content>
+<div mat-dialog-actions fxLayout="row">
+    <button mat-button (click)="onAddLayerClick()">Добавить слой</button>
+    <span fxFlex></span>
+    <button mat-button (click)="onAcceptClick()" color="primary" [disabled]="!form.valid"
+        cdkFocusInitial>Построить</button>
+    <button mat-button mat-dialog-close>Отмена</button>
+</div>

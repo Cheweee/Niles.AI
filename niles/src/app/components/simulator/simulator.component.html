@@ -1,0 +1,21 @@
+<mat-drawer-container class="h-100">
+    <mat-drawer mode="side" opened #playgroundSettings>
+        <div fxLayout="column" class="p-1">
+            <h2>Заполнение среды {{environmentDensity}}%</h2>
+            <mat-slider max="50" min="10" step="5" thumbLabel [(ngModel)]="environmentDensity"></mat-slider>
+            
+            <h2>Количество сенсоров</h2>
+            <mat-slider max="64" min="8" step="2" thumbLabel [(ngModel)]="sensorsCount"></mat-slider>
+
+            <button mat-raised-button color="primary" (click)="start()">Старт</button>
+
+            <mat-divider class="my-2"></mat-divider>
+
+            <mat-slide-toggle [(ngModel)]="showVision">Показать зрение клетки</mat-slide-toggle>
+        </div>
+    </mat-drawer>
+    <mat-drawer-content class="h-100">
+        <playground #playgroundContainer [environment]="environment" [availableLength]="availableLength"
+            [showCellVision]="showVision" (checkEnvironment)="onCheckEnvironment()"></playground>
+    </mat-drawer-content>
+</mat-drawer-container>

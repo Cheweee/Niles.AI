@@ -1,0 +1,43 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Niles.AI (api + worker)",
+            "configurations": [
+                "Niles.AI (api)",
+                "Niles.AI (worker)"
+            ]
+        },
+    ],
+    "configurations": [
+        {
+            "name": "Niles.AI (worker)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_worker",
+            "program": "${workspaceFolder}/Niles.AI.Worker/bin/Debug/netcoreapp3.1/Niles.AI.Worker.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Niles.AI.Worker",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "Niles.AI (api)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceRoot}/Niles.AI.API/bin/Debug/netcoreapp3.1/Niles.AI.API.dll",
+            "args": [],
+            "cwd": "${workspaceRoot}/Niles.AI.API",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+            },
+            "justMyCode": false,
+            "suppressJITOptimizations": true,
+        },
+    ]
+}
