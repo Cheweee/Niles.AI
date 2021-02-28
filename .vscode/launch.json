@@ -22,7 +22,12 @@
             "args": [],
             "cwd": "${workspaceFolder}/Niles.AI.Worker",
             "stopAtEntry": false,
-            "console": "internalConsole"
+            "console": "internalConsole",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+            },
+            "justMyCode": false,
+            "suppressJITOptimizations": true
         },
         {
             "name": "Niles.AI (api)",
@@ -39,5 +44,12 @@
             "justMyCode": false,
             "suppressJITOptimizations": true,
         },
+        {
+            "name": "Niles.AI (web-client)",
+            "type": "node",
+            "request": "launch",
+            "preLaunchTask": "client-serve",
+            "cwd": "${workspaceFolder}\\niles"
+        }
     ]
 }
