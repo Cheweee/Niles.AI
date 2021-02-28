@@ -5,10 +5,11 @@
     "version": "0.2.0",
     "compounds": [
         {
-            "name": "Niles.AI (api + worker)",
+            "name": "Niles.AI (api + worker + client)",
             "configurations": [
                 "Niles.AI (api)",
-                "Niles.AI (worker)"
+                "Niles.AI (worker)",
+                "Niles.AI (web-client)"
             ]
         },
     ],
