@@ -102,7 +102,8 @@ export class PlaygroundComponent implements AfterViewInit {
                 this._context.beginPath()
                 this._context.moveTo(cell.x + cell.r * Math.cos(side * 2 * Math.PI / sidesCount), cell.y + cell.r * Math.sin(side * 2 * Math.PI / sidesCount));
                 this._context.lineTo(cell.x + cell.r * Math.cos(side * 2 * Math.PI / sidesCount) * 5, cell.y + cell.r * Math.sin(side * 2 * Math.PI / sidesCount) * 5);
-                this._context.strokeStyle = sensor.isActivated ? '#ef767a' : '#7d7abc'
+                this._context.strokeStyle = sensor.isActivated ? '#ef767a' : '#a7a7a7';
+                this._context.lineWidth = sensor.isActivated ? 2 : 1;
                 this._context.stroke();
             }
         }
