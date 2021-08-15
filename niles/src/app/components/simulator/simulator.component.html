@@ -4,10 +4,12 @@
             <h2>Заполнение среды {{environmentDensity}}%</h2>
             <mat-slider max="50" min="10" step="5" thumbLabel [(ngModel)]="environmentDensity"></mat-slider>
             
-            <h2>Количество сенсоров</h2>
+            <h2>Количество сенсоров {{sensorsCount}}</h2>
             <mat-slider max="64" min="8" step="2" thumbLabel [(ngModel)]="sensorsCount"></mat-slider>
 
             <button mat-raised-button color="primary" (click)="start()">Старт</button>
+
+            <button mat-raised-button color="error" class="my-2" (click)="start()">Стоп</button>
 
             <mat-divider class="my-2"></mat-divider>
 
