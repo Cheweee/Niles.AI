@@ -42,7 +42,7 @@ const routes: Routes = [
     MaterialModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true },
