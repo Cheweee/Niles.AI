@@ -33,6 +33,11 @@ export class NeuralNetworkService {
         return this._httpClient.post(this._apiUrl, options, this._httpOptions).subscribe(result => console.log('success'));
     }
 
+    public clearInstance()
+    {
+        return this._httpClient.delete(this._apiUrl, this._httpOptions).subscribe(result => console.log('success'));
+    }
+
     public getColorFromWeight(pulse: number) {
       const red = 125 * (1 + pulse);
       const green = 200 / (1 + pulse);

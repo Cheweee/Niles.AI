@@ -17,22 +17,31 @@ function randomInt(min, max) {
     templateUrl: './simulator.component.html'
 })
 export class SimulatorComponent {
+    private readonly _initialEnvironmentDensity: number = 15;
+    private readonly _initialSensorsCount: number = 16;
+
     public environment: Environment;
-    public environmentDensity: number = 15;
+    public environmentDensity: number = this._initialEnvironmentDensity;
     public availableLength: number;
     public showVision: boolean = false;
-    public sensorsCount: number = 16;
+    public sensorsCount: number = this._initialSensorsCount;
     @ViewChild('playgroundContainer') playgroundContainer: PlaygroundComponent;
 
-    constructor(private _neuralNetworkService: NeuralNetworkService,
-        private readonly signalrService: SignalrService) {
+    constructor(
+        private _neuralNetworkService: NeuralNetworkService,
+        private readonly _signalrService: SignalrService
+    ) {
         this.environment = new Environment();
     }
 
     ngOnInit() {
-        this.signalrService.registerReceiveEvent((message) => this.getANNOutput(message));
+        this._signalrService.registerReceiveEvent((message) => this.getANNOutput(message));
         // Такой финт нужен, потому что SignalR может не успеть установить соединение
-        this.signalrService.startConnection().finally(() => this._neuralNetworkService.getInstance());
+        this._signalrService.startConnection().finally(() => this._neuralNetworkService.getInstance());
+    }
+
+    ngAfterViewInit() {
+        this.initializeFood();
     }
 
     private getANNOutput(message) {
@@ -49,7 +58,7 @@ export class SimulatorComponent {
     }
 
     public onCheckEnvironment() {
-        for (const cell of this.environment.infusories) {            
+        for (const cell of this.environment.infusories) {
             this._neuralNetworkService.activateInstance({
                 input: cell.sensors.map(o => o.isActivated ? 1 : 0),
                 activateFunction: ActivateFunctions.HyperbolicTangent
@@ -58,7 +67,18 @@ export class SimulatorComponent {
     }
 
     public start() {
-        this.environment.infusories = [];
+        this.initializeInfusories();
+    }
+
+    public stop(): void {
+        this.environmentDensity = this._initialEnvironmentDensity;
+        this.sensorsCount = this._initialSensorsCount;
+
+        this.clearInfusories();
+        this.initializeFood();
+    }
+
+    private initializeFood() {
         this.environment.eat = [];
 
         const square = this.playgroundContainer._options.width * this.playgroundContainer._options.height;
@@ -74,7 +94,15 @@ export class SimulatorComponent {
                 10
             ));
         }
+    }
 
+    private clearInfusories() {
+        this.environment.infusories = [];
+        this._neuralNetworkService.clearInstance();
+    }
+
+    private initializeInfusories() {
+        this.clearInfusories();
         this.environment.infusories.push(new Infusory(
             randomInt(0, this.playgroundContainer._options.width),
             randomInt(0, this.playgroundContainer._options.height),

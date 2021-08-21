@@ -52,5 +52,14 @@ namespace Niles.AI.API
 
             return Ok();
         }
+
+        [AllowAnonymous]
+        [HttpDelete]
+        public IActionResult ClearInstance()
+        {
+            _service.ClearInstance();
+
+            return Ok();
+        }
     }
 }

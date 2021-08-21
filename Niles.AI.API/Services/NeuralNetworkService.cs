@@ -86,6 +86,20 @@ namespace Niles.AI.API.Services
             _rabbitMQService.Send(settings, options);
         }
 
+        public void ClearInstance()
+        {
+            var settings = new RabbitMQQueueOptions
+            {
+                AutoAck = true,
+                AutoDelete = false,
+                Durable = false,
+                Exclusive = false,
+                Global = false,
+                Name = RabbitMQQueueNames.ClearInstance.ToString(),
+            };
+            _rabbitMQService.Send(settings);
+        }
+
         public void SubscribeOnGetInstanceResponse()
         {
             _logger.LogInformation($"Try to subscribe on \"{RabbitMQQueueNames.GetInstanceResponse}\" queue");

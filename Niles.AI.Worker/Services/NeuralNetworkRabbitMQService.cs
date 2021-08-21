@@ -78,6 +78,20 @@ namespace Niles.AI.Worker.Services
             });
         }
 
+        public void SubscribeOnClearInstanceQueue()
+        {
+            _rabbitMQService.Recieve(new RabbitMQQueueOptions
+            {
+                AutoAck = true,
+                AutoDelete = false,
+                Durable = false,
+                Exclusive = false,
+                Global = false,
+                Name = RabbitMQQueueNames.ClearInstance.ToString(),
+                OnReceive = ClearInstanceResponse
+            });
+        }
+
         ///<summary> Ответ на событие очереди Build </summary>
         private void BuildInstanceResponse(object sender, BasicDeliverEventArgs eventArgs)
         {
@@ -117,6 +131,14 @@ namespace Niles.AI.Worker.Services
         ///<summary> Ответ на событие очереди GetInstance </summary>
         private void GetIstanceResponse(object sender, BasicDeliverEventArgs eventArgs)
         {
+            SendInstance();
+        }
+
+        ///<summary> Очищает текущую структуру нейронной сети </summary>
+        private void ClearInstanceResponse(object sender, BasicDeliverEventArgs eventArgs)
+        {
+            _neuralNetworkService.ClearNetworkInstance();
+
             SendInstance();
         }
 

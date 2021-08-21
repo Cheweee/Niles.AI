@@ -30,6 +30,12 @@ namespace Niles.AI.Worker.Services
             Build(options);
         }
 
+        ///<summary> Очищает нейронную сеть </summary>
+        public void ClearNetworkInstance()
+        {
+            ClearInstance();
+        }
+
         ///<summary> Построение нейронной сети с учетом опций </summary>
         ///<param name="options"> Опции построения нейронной сети </param>
         public void Build(NeuralNetworkBuildOptions options)

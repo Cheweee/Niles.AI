@@ -42,6 +42,7 @@ namespace Niles.AI.Worker
             _neuralNetworkRabbitMQService.SubscribeOnBuildInstanceQueue();
             _neuralNetworkRabbitMQService.SubscribeOnTrainInstanceQueue();
             _neuralNetworkRabbitMQService.SubscribeOnActivateInstanceQueue();
+            _neuralNetworkRabbitMQService.SubscribeOnClearInstanceQueue();
 
             _neuralNetworkRabbitMQService.SendInstance();
             while (!stoppingToken.IsCancellationRequested)

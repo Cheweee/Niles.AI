@@ -9,7 +9,8 @@ namespace Niles.AI.Models.Settings
         Build,
         Activate,
         GetInstance,
-        GetInstanceResponse
+        GetInstanceResponse,
+        ClearInstance
     }
 
     ///<summary> Класс настроек подключения к RabbitMQ </summary>

@@ -48,6 +48,24 @@ namespace Niles.AI.Services
         ///<summry> Подключение к очереди и отправка сообщения </summary>
         ///<param name="queueOptions"> Опции создания или подключения к очереди </param>
         ///<param name="message"> Сообщение, которое нужно передать </param>
+        public void Send(RabbitMQQueueOptions queueOptions)
+        {
+            _logger.LogInformation($"Try to send to: {queueOptions.Name}");
+            _channel.QueueDeclare(queue: queueOptions.Name,
+                                 durable: queueOptions.Durable,
+                                 exclusive: queueOptions.Exclusive,
+                                 autoDelete: queueOptions.AutoDelete,
+                                 arguments: queueOptions.Arguments);
+
+            _channel.BasicPublish(exchange: "",
+                                 routingKey: queueOptions.Name,
+                                 basicProperties: null
+                                 );
+        }
+
+        ///<summry> Подключение к очереди и отправка сообщения </summary>
+        ///<param name="queueOptions"> Опции создания или подключения к очереди </param>
+        ///<param name="message"> Сообщение, которое нужно передать </param>
         public void Send<T>(RabbitMQQueueOptions queueOptions, T message)
         {
             _logger.LogInformation($"Try to send to: {queueOptions.Name}");
