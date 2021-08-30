@@ -35,6 +35,7 @@ export interface NeuralLayerBuildOptions {
 
 export interface NeuralNetworkBuildOptions {
     layersBuildOptions: NeuralLayerBuildOptions[];
+    activateFunction: ActivateFunctions;
 }
 
 export interface NeuralNetworkTrainOptions {
@@ -42,13 +43,11 @@ export interface NeuralNetworkTrainOptions {
     learningRate?: number;
     moment?: number;
     trainSets?: TrainSet[];
-    activateFunction: ActivateFunctions;
     trainStrategy: TrainStrategies;
 }
 
 export interface NeuralNetworkActivateOptions {
     input: number[];
-    activateFunction: ActivateFunctions;
 }
 
 export interface TrainSet {

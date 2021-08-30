@@ -1,5 +1,5 @@
 import { ThrowStmt } from '@angular/compiler';
-import { ElementRef, EventEmitter, Output } from '@angular/core';
+import { AfterContentInit, ElementRef, EventEmitter, Output } from '@angular/core';
 import { HostListener } from '@angular/core';
 import { Component, Input, ViewChild, AfterViewInit } from '@angular/core';
 import { clear } from 'console';
@@ -18,7 +18,7 @@ function randomInt(min, max) {
     selector: 'playground',
     templateUrl: './playground.component.html'
 })
-export class PlaygroundComponent implements AfterViewInit {
+export class PlaygroundComponent  {
     @Input('environment') environment: Environment;
     @Input('availableLength') availableLength: number;
     @Input('showCellVision') showCellVision: boolean;
@@ -34,13 +34,7 @@ export class PlaygroundComponent implements AfterViewInit {
     private eatInterval: NodeJS.Timeout;
     private environmentInterval: NodeJS.Timeout;
 
-    ngAfterViewInit() {
-        this.setOptions();
-        const canvas = this.playground.nativeElement;
-        this._context = canvas.getContext('2d');
-
-        window.requestAnimationFrame(() => this.draw());
-
+    ngOnInit() {
         this.eatInterval = setInterval(() => {
             const cell: Eat = new Eat(
                 randomInt(0, this._options.height),
@@ -62,6 +56,14 @@ export class PlaygroundComponent implements AfterViewInit {
         this.environmentInterval = setInterval(() => {
             this.checkEnvironment.emit();
         }, 500);
+    }
+
+    ngAfterViewInit() {
+        this.setOptions();
+        const canvas = this.playground.nativeElement;
+        this._context = canvas.getContext('2d');
+
+        window.requestAnimationFrame(() => this.draw());
     }
 
     private drawEat(cell: Eat) {
@@ -100,7 +102,7 @@ export class PlaygroundComponent implements AfterViewInit {
             for (let side = 0; side < cell.sensors.length; side++) {
                 const sensor = cell.sensors[side];
                 this._context.beginPath()
-                this._context.moveTo(cell.x + cell.r * Math.cos(side * 2 * Math.PI / sidesCount), cell.y + cell.r * Math.sin(side * 2 * Math.PI / sidesCount));
+                this._context.moveTo(cell.x +  cell.r * Math.cos(side * 2 * Math.PI / sidesCount), cell.y + cell.r * Math.sin(side * 2 * Math.PI / sidesCount));
                 this._context.lineTo(cell.x + cell.r * Math.cos(side * 2 * Math.PI / sidesCount) * 5, cell.y + cell.r * Math.sin(side * 2 * Math.PI / sidesCount) * 5);
                 this._context.strokeStyle = sensor.isActivated ? '#ef767a' : '#a7a7a7';
                 this._context.lineWidth = sensor.isActivated ? 2 : 1;

@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Niles.AI.API.Services;
-using Niles.AI.Models;
-using Niles.AI.Services.Interfaces;
 
 namespace Niles.AI.API
 {

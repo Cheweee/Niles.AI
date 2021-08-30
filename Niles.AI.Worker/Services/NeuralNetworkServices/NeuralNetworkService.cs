@@ -6,10 +6,10 @@ using Niles.AI.Services.Interfaces;
 
 namespace Niles.AI.Worker.Services
 {
-    public class NeuralNetworkService : INeuralNetworkService
+    public abstract class NeuralNetworkService : INeuralNetworkService
     {
-        private readonly ComputeService _computeService;
-        private readonly ILogger<NeuralNetworkService> _logger;
+        protected readonly ComputeService _computeService;
+        protected readonly ILogger<NeuralNetworkService> _logger;
 
         public NeuralNetwork Instance { get; } = new NeuralNetwork();
 
@@ -22,26 +22,14 @@ namespace Niles.AI.Worker.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        ///<summary> Инициализирует нейронную сеть </summary>
-        public void InitializeNetworkInstance(NeuralNetworkBuildOptions options)
-        {
-            ClearInstance();
-
-            Build(options);
-        }
-
-        ///<summary> Очищает нейронную сеть </summary>
-        public void ClearNetworkInstance()
-        {
-            ClearInstance();
-        }
-
         ///<summary> Построение нейронной сети с учетом опций </summary>
         ///<param name="options"> Опции построения нейронной сети </param>
         public void Build(NeuralNetworkBuildOptions options)
         {
+            ClearInstance();
             int layerId = 1;
             int neuronId = 1;
+
             foreach (var layerOptions in options.LayersBuildOptions)
             {
                 var layer = new NeuralLayer
@@ -76,14 +64,14 @@ namespace Niles.AI.Worker.Services
                 foreach (var trainSet in options.TrainSets)
                 {
                     // Прогоняем данные
-                    Activate(new NeuralNetworkActivateOptions { Input = trainSet.Input, ActivateFunction = options.ActivateFunction });
+                    Activate(new NeuralNetworkActivateOptions { Input = trainSet.Input });
 
                     // Оцениваем ошибку
                     trainSet.ErrorRate = _computeService.MSEErrorRate(trainSet.IdealOutput, Instance.Output);
                     if (epoch == 0 || epoch % 1000 == 0)
                         _logger.LogInformation($"Current network instance error rate: {(trainSet.ErrorRate * 100).ToString("0")}% on {epoch} epoch");
 
-                    ComputeDeltas(trainSet, options.ActivateFunction);
+                    ComputeDeltas(trainSet);
                     OptimizeWeights(learningRate, options.Moment);
                 }
                 learningRate += 0.0000001;
@@ -115,30 +103,8 @@ namespace Niles.AI.Worker.Services
                         continue;
                     }
 
-                    ActivateNeuron(neuron, options.ActivateFunction);
+                    ActivateNeuron(neuron);
                 }
-            }
-        }
-
-        ///<summary> Функция активации нейрона с помощью сигмоида </summary>
-        ///<param name="neuron"> Нейрон, который необходимо активировать </param>
-        private void ActivateNeuron(Neuron neuron, ActivateFunctions function)
-        {
-            double input = 0.0;
-            foreach (var synapse in neuron.Dendrites)
-            {
-                var biasNeuronWeight = neuron.Dendrites.FirstOrDefault(d => d.Input.IsHidden)?.Weight;
-                input += synapse.Input.Axon * synapse.Weight + (biasNeuronWeight.HasValue ? biasNeuronWeight.Value : 0);
-            }
-
-            switch (function)
-            {
-                default:
-                    neuron.Axon = _computeService.Sigmoid(input);
-                    break;
-                case ActivateFunctions.HyperbolicTangent:
-                    neuron.Axon = _computeService.HyperbolicTangent(input);
-                    break;
             }
         }
 
@@ -175,7 +141,7 @@ namespace Niles.AI.Worker.Services
         }
 
         ///<summary> Очищает нейронную сеть </summary>
-        private void ClearInstance()
+        public void ClearInstance()
         {
             Instance.Layers = new List<NeuralLayer>();
         }
@@ -199,51 +165,15 @@ namespace Niles.AI.Worker.Services
             }
         }
 
+        ///<summary> Функция активации нейрона с помощью сигмоида </summary>
+        ///<param name="neuron"> Нейрон, который необходимо активировать </param>
+        protected abstract void ActivateNeuron(Neuron neuron);
+
         ///<summary> Вычисляет дельты нейронов </summary>
-        private void ComputeDeltas(TrainSet trainSet, ActivateFunctions function)
-        {
-            for (int i = Instance.Layers.Count - 1; i > 0; i--)
-            {
-                var layer = Instance.Layers[i];
-                if (i == Instance.Layers.Count - 1)
-                {
-                    for (int oi = 0; oi < layer.Neurons.Count; oi++)
-                    {
-                        var neuron = layer.Neurons[oi];
-                        switch (function)
-                        {
-                            default:
-                                neuron.Delta = _computeService.OutputDeltaForSigmoid(trainSet.IdealOutput[oi], neuron.Axon);
-                                break;
-                            case ActivateFunctions.HyperbolicTangent:
-                                neuron.Delta = _computeService.OutputDeltaForHyperbolicTangent(trainSet.IdealOutput[oi], neuron.Axon);
-                                break;
-                        }
-                    }
-                    continue;
-                }
-
-                var prevLayer = Instance.Layers[i + 1];
-
-                for (int j = 0; j < layer.Neurons.Count; j++)
-                {
-                    var neuron = layer.Neurons[j];
-                    var neuronDendrites = prevLayer.Neurons.SelectMany(o => o.Dendrites.Where(d => d.Input.Id == neuron.Id));
-                    switch (function)
-                    {
-                        default:
-                            neuron.Delta = _computeService.HiddenDeltaForSigmoid(neuron.Axon, neuronDendrites.Select(d => d.Weight).ToList(), prevLayer.Neurons.Select(o => o.Delta).ToList());
-                            break;
-                        case ActivateFunctions.HyperbolicTangent:
-                            neuron.Delta = _computeService.HiddenDeltaForHyperbolicTangent(neuron.Axon, neuronDendrites.Select(d => d.Weight).ToList(), prevLayer.Neurons.Select(o => o.Delta).ToList());
-                            break;
-                    }
-                }
-            }
-        }
+        protected abstract void ComputeDeltas(TrainSet trainSet);
 
         ///<summary> Оптимизирует веса нейронов </summary>
-        private void OptimizeWeights(double learningRate, double moment)
+        protected virtual void OptimizeWeights(double learningRate, double moment)
         {
             for (int i = 1; i < Instance.Layers.Count; i++)
             {
@@ -259,7 +189,7 @@ namespace Niles.AI.Worker.Services
         }
 
         ///<summary> Обновляет веса нейронов </summary>
-        private void UpdateSynapsesWeights(Neuron neuron, double learningRate, double moment)
+        protected virtual void UpdateSynapsesWeights(Neuron neuron, double learningRate, double moment)
         {
             foreach (var synapse in neuron.Dendrites)
             {

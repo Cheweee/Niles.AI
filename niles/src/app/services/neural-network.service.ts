@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { NeuralNetworkBuildOptions, NeuralNetworkTrainOptions, NeuralNetworkActivateOptions } from '../models';
+import { NeuralNetworkBuildOptions, NeuralNetworkTrainOptions, NeuralNetworkActivateOptions, NeuralNetwork } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class NeuralNetworkService {
@@ -14,28 +14,28 @@ export class NeuralNetworkService {
         private readonly _httpClient: HttpClient
     ) { }
 
-    public getInstance() {
-        return this._httpClient.get(this._apiUrl).subscribe(result => console.log('success'));
+    public getInstance() : Promise<NeuralNetwork> {
+        return this._httpClient.get<NeuralNetwork>(this._apiUrl).toPromise();
     }
 
-    public buildInstance(options: NeuralNetworkBuildOptions)
+    public buildInstance(options: NeuralNetworkBuildOptions): Promise<any>
     {
-        return this._httpClient.put(this._apiUrl, JSON.stringify(options), this._httpOptions).subscribe(result => console.log('success'));
+        return this._httpClient.put(this._apiUrl, JSON.stringify(options), this._httpOptions).toPromise();
     }
 
-    public trainInstance(options: NeuralNetworkTrainOptions)
+    public trainInstance(options: NeuralNetworkTrainOptions): Promise<any>
     {
-        return this._httpClient.post(`${this._apiUrl}/train`, options, this._httpOptions).subscribe(result => console.log('success'));
+        return this._httpClient.post(`${this._apiUrl}/train`, options, this._httpOptions).toPromise();
     }
 
-    public activateInstance(options: NeuralNetworkActivateOptions)
+    public activateInstance(options: NeuralNetworkActivateOptions): Promise<any>
     {
-        return this._httpClient.post(this._apiUrl, options, this._httpOptions).subscribe(result => console.log('success'));
+        return this._httpClient.post(this._apiUrl, options, this._httpOptions).toPromise();
     }
 
-    public clearInstance()
+    public clearInstance(): Promise<any>
     {
-        return this._httpClient.delete(this._apiUrl, this._httpOptions).subscribe(result => console.log('success'));
+        return this._httpClient.delete(this._apiUrl, this._httpOptions).toPromise();
     }
 
     public getColorFromWeight(pulse: number) {

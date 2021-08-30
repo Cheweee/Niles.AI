@@ -2,20 +2,23 @@ using System;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Niles.AI.Models.Settings;
 using Niles.AI.Services;
 using RabbitMQ.Client.Events;
 
 namespace Niles.AI.Worker.Services
 {
-    public class NeuralNetworkRabbitMQService
+    public class WorkerRabbitMQService
     {
         private readonly RabbitMQService _rabbitMQService;
-        private readonly NeuralNetworkService _neuralNetworkService;
+        private readonly INeuralNetwork _neuralNetworkService;
 
-        public NeuralNetworkRabbitMQService(
+        private ActivateFunctions _activateFunction;
+
+        public WorkerRabbitMQService(
             RabbitMQService rabbitMQService,
-            NeuralNetworkService neuralNetworkService
+            INeuralNetwork neuralNetworkService
         )
         {
             _rabbitMQService = rabbitMQService ?? throw new ArgumentNullException(nameof(rabbitMQService));
@@ -99,9 +102,11 @@ namespace Niles.AI.Worker.Services
             var message = Encoding.UTF8.GetString(body.ToArray());
             var options = JsonConvert.DeserializeObject<NeuralNetworkBuildOptions>(message);
 
-            _neuralNetworkService.InitializeNetworkInstance(options);
+            _activateFunction = options.ActivateFunction;
 
-            SendInstance();
+            _neuralNetworkService.Build(options, _activateFunction);
+
+            SendInstance(_activateFunction);
         }
 
         ///<summary> Ответ на событие очереди Train </summary>
@@ -111,9 +116,9 @@ namespace Niles.AI.Worker.Services
             var message = Encoding.UTF8.GetString(body.ToArray());
             var options = JsonConvert.DeserializeObject<NeuralNetworkTrainOptions>(message);
 
-            _neuralNetworkService.Train(options);
+            _neuralNetworkService.Train(options, _activateFunction);
 
-            SendInstance();
+            SendInstance(_activateFunction);
         }
 
         ///<summary> Ответ на событие очереди Activate </summary>
@@ -123,28 +128,29 @@ namespace Niles.AI.Worker.Services
             var message = Encoding.UTF8.GetString(body.ToArray());
             var options = JsonConvert.DeserializeObject<NeuralNetworkActivateOptions>(message);
 
-            _neuralNetworkService.Activate(options);
+            _neuralNetworkService.Activate(options, _activateFunction);
 
-            SendInstance();
+            SendInstance(_activateFunction);
         }
 
         ///<summary> Ответ на событие очереди GetInstance </summary>
         private void GetIstanceResponse(object sender, BasicDeliverEventArgs eventArgs)
         {
-            SendInstance();
+            SendInstance(_activateFunction);
         }
 
         ///<summary> Очищает текущую структуру нейронной сети </summary>
         private void ClearInstanceResponse(object sender, BasicDeliverEventArgs eventArgs)
         {
-            _neuralNetworkService.ClearNetworkInstance();
+            _neuralNetworkService.ClearInstance(_activateFunction);
 
-            SendInstance();
+            SendInstance(_activateFunction);
         }
 
         ///<summary> Возвращает текущую структуру нейронной сети </summary>
-        public void SendInstance()
+        public void SendInstance(ActivateFunctions function)
         {
+            var instance = _neuralNetworkService.GetInstance(function);
             _rabbitMQService.Send(new RabbitMQQueueOptions
             {
                 AutoAck = true,
@@ -153,7 +159,7 @@ namespace Niles.AI.Worker.Services
                 Exclusive = false,
                 Global = false,
                 Name = RabbitMQQueueNames.GetInstanceResponse.ToString()
-            }, _neuralNetworkService.Instance);
+            }, instance);
         }
     }
 }

@@ -1,7 +1,7 @@
 import { Component, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
-import { ActivateFunctions, NeuralNetworkTrainOptions, TrainSet, TrainStrategies } from 'src/app/models';
+import { NeuralNetworkTrainOptions, TrainSet, TrainStrategies } from 'src/app/models';
 
 @Component({
     selector: 'train-options',
@@ -17,7 +17,6 @@ export class TrainOptionsDialog {
     public learningRate: number;
     public moment: number;
     public expectedOutput: number[];
-    public ActivateFunctions = ActivateFunctions;
 
     public ngOnInit(): void {
         this.form = new FormGroup({
@@ -36,8 +35,7 @@ export class TrainOptionsDialog {
             ]),
             outputs: new FormArray([], [
                 Validators.minLength(1),
-            ]),
-            activateFunction: new FormControl(ActivateFunctions.Sigmoid)
+            ])
         });
     }
 
@@ -74,7 +72,6 @@ export class TrainOptionsDialog {
             trainSets: trainSets,
             learningRate: this.form.controls.learningRate.value,
             moment: this.form.controls.moment.value,
-            activateFunction: this.form.controls.activateFunction.value,
             trainStrategy: TrainStrategies.BackPropagation
         };
 

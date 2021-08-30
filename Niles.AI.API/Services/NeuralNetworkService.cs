@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Niles.AI.API.Hubs;
 using Niles.AI.Models;
 using Niles.AI.Models.Settings;
@@ -40,7 +41,7 @@ namespace Niles.AI.API.Services
                 Name = RabbitMQQueueNames.GetInstance.ToString()
             };
 
-            _rabbitMQService.Send(options, new object());
+            _rabbitMQService.Send(options);
         }
 
         ///<summary> Обращаемся к worker'у, чтобы он активировал текущую нейронную сеть </summary>

@@ -28,6 +28,10 @@ export class ANNComponent {
     public getInstance() {
       this.neuralNetworkService.getInstance();
     }
+
+    public clearInstance() {
+      this.neuralNetworkService.clearInstance();
+    }
   
     private mapInstanceToGraph(networkInstance: NeuralNetwork) {
       if (!networkInstance || !networkInstance.layers) {

@@ -1,9 +1,16 @@
 <h2 mat-dialog-title>Опции построения нейронной сети</h2>
 <mat-dialog-content class="mh-300">
-    <div *ngIf="!layersBuildOptions.length" fxLayout="row" fxLayoutAlign="center center" class="text-muted">Вы еще не
-        добавили слои</div>
-    <form *ngIf="layersBuildOptions.length" [formGroup]="form">
-        <span>Слои нейронной сети</span>
+    <form [formGroup]="form">
+        <label>Функция активации:</label>
+        <mat-radio-group formControlName="activateFunction" fxLayout="column">
+            <mat-radio-button class="m-1" [value]="ActivateFunctions.Sigmoid"> Сигмоида </mat-radio-button>
+            <mat-radio-button class="m-1" [value]="ActivateFunctions.HyperbolicTangent"> Гиперболический тангенс
+            </mat-radio-button>
+        </mat-radio-group>
+        <div *ngIf="!layersBuildOptions.length" fxLayout="row" fxLayoutAlign="center center" class="text-muted">Вы еще
+            не
+            добавили слои</div>
+        <span *ngIf="layersBuildOptions.length">Слои нейронной сети</span>
         <div *ngFor="let options of layersBuildOptions; let i = index" fxLayout="row">
             <mat-form-field class="w-100 mr-1">
                 <mat-label>Название</mat-label>

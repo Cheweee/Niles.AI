@@ -19,8 +19,6 @@ export class ApiUrlInterceptor implements HttpInterceptor {
             url: newUrl
         });
 
-        console.log(`new api url: ${request.url}`);
-
         return next.handle(request);
     }
 }

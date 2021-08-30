@@ -3,6 +3,9 @@ using System.Linq;
 ///<summary> Модель многослойной нейронной сети </summary>
 public class NeuralNetwork
 {
+    ///<summary>Функция активации нейронной сети</summary>
+    public ActivateFunctions ActivateFunction { get; set; } = ActivateFunctions.Sigmoid;
+    
     ///<summary> Слои нейронной сети </summary>
     public List<NeuralLayer> Layers { get; set; } = new List<NeuralLayer>();
 
@@ -29,6 +32,9 @@ public class NeuralNetworkBuildOptions
 
     ///<summary> Использовать нейроны смещения </summary>
     public bool UseBias { get; set; }
+
+    ///<summary>Функция активации нейронной сети</summary>
+    public ActivateFunctions ActivateFunction { get; set; } = ActivateFunctions.Sigmoid;
 }
 
 ///<summary> Опции обучения нейронной сети </summary>
@@ -56,7 +62,7 @@ public class NeuralNetworkActivateOptions
     ///<symmary> Входные данные нейронной сети </summary>
     public IReadOnlyList<double> Input { get; set; } = new List<double>();
 
-    ///<symmary> Функция активации </summary>
+    ///<summary> Функция активации </summary>
     public ActivateFunctions ActivateFunction { get; set; } = ActivateFunctions.Sigmoid;
 }
 

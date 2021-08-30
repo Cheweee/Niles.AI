@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { NeuralLayerBuildOptions, NeuralNetworkBuildOptions } from 'src/app/models';
+import { ActivateFunctions, NeuralLayerBuildOptions, NeuralNetworkBuildOptions } from 'src/app/models';
 
 @Component({
     selector: 'build-options',
@@ -11,13 +11,14 @@ export class BuildOptionsDialog {
     constructor(public dialogRef: MatDialogRef<BuildOptionsDialog>) { }
 
     public form: FormGroup;
+    public ActivateFunctions = ActivateFunctions;
     public layersBuildOptions: NeuralLayerBuildOptions[];
 
     public ngOnInit(): void {
         this.layersBuildOptions = [];
 
         this.form = new FormGroup({
-
+            activateFunction: new FormControl(ActivateFunctions.Sigmoid)
         });
     }
 
@@ -30,7 +31,8 @@ export class BuildOptionsDialog {
             this.layersBuildOptions[i].neuronsCount = parseInt(this.form.controls[neuronsCountControl].value);
         }
         const options: NeuralNetworkBuildOptions = {
-            layersBuildOptions: this.layersBuildOptions
+            layersBuildOptions: this.layersBuildOptions,
+            activateFunction: this.form.controls.activateFunction.value
         };
         this.dialogRef.close(options);
     }

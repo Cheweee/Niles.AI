@@ -11,5 +11,6 @@ namespace Niles.AI.Services.Interfaces
         void Train(NeuralNetworkTrainOptions options);
         ///<summary> Функция активации нейронной сети </summary>
         void Activate(NeuralNetworkActivateOptions options);
+        void ClearInstance();
     }
 }

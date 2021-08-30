@@ -21,6 +21,10 @@ export class SignalrService {
             });
     }
 
+    public stopConnection() {
+        return this.connection.stop();
+    }
+
     public registerReceiveEvent = (callback) => {
         this.connection.on("niles.neuralnetwork", function (message) {
             callback(message);

@@ -1,18 +1,29 @@
 <mat-drawer-container class="h-100">
     <mat-drawer mode="side" opened #playgroundSettings>
         <div fxLayout="column" class="p-1">
-            <h2>Заполнение среды {{environmentDensity}}%</h2>
-            <mat-slider max="50" min="10" step="5" thumbLabel [(ngModel)]="environmentDensity"></mat-slider>
-            
             <h2>Количество сенсоров {{sensorsCount}}</h2>
-            <mat-slider max="64" min="8" step="2" thumbLabel [(ngModel)]="sensorsCount"></mat-slider>
+            <mat-slider [disabled]="simulationStarted" max="64" min="8" step="2" thumbLabel [(ngModel)]="sensorsCount">
+            </mat-slider>
 
-            <button mat-raised-button color="primary" (click)="start()">Старт</button>
+            <!-- <mat-slide-toggle [disabled]="simulationStarted" class="mb-2" [(ngModel)]="isManual">Ручное управление
+            </mat-slide-toggle> -->
 
-            <button mat-raised-button color="error" class="my-2" (click)="stop()">Стоп</button>
-
+            <div fxLayout="row" fxLayoutAlign="center center">
+                <button [disabled]="simulationStarted && !paused" matTooltip="Запустить симуляцию" mat-icon-button color="primary" (click)="start()">
+                    <mat-icon>play_arrow</mat-icon>
+                </button>
+                <button [disabled]="!(simulationStarted && !paused)" matTooltip="Приостановить симуляцию" mat-icon-button (click)="pause()">
+                    <mat-icon>pause</mat-icon>
+                </button>
+                <button [disabled]="!simulationStarted" matTooltip="Остановить симуляцию" mat-icon-button color="error" class="my-2" (click)="stop()">
+                    <mat-icon>stop</mat-icon>
+                </button>
+            </div>
             <mat-divider class="my-2"></mat-divider>
 
+            <h2 class="mb-0">Заполнение среды {{environmentDensity}}%</h2>
+            <mat-slider max="50" min="10" step="5" thumbLabel (change)="slideEnd()"
+                [(ngModel)]="environmentDensity"></mat-slider>
             <mat-slide-toggle [(ngModel)]="showVision">Показать зрение клетки</mat-slide-toggle>
         </div>
     </mat-drawer>

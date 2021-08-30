@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Niles.AI.Models.Settings;
 using Niles.AI.Services;
 using Niles.AI.Worker.Services;
+using Niles.AI.Worker.Extensions;
 
 namespace Niles.AI.Worker
 {
@@ -25,8 +26,12 @@ namespace Niles.AI.Worker
                         var logger = provider.GetService<ILogger<RabbitMQService>>();
                         return new RabbitMQService(settings, logger);
                     });
-                    services.AddSingleton<NeuralNetworkService>();
-                    services.AddSingleton<NeuralNetworkRabbitMQService>();
+                    services.AddSingleton<INeuralNetworkTyped, SigmoidNeuralNetwork>();
+                    services.AddSingleton<INeuralNetworkTyped, HyperbolicTangentNeuralNetwork>();
+                    services.AddSingleton<WorkerRabbitMQService>(provider => {
+                        var rabbitMQService = provider.GetService<RabbitMQService>();
+                        return new WorkerRabbitMQService(rabbitMQService, provider.ComposeNeuralNetworks());
+                    });
                     services.AddSingleton<ComputeService>();
                     services.AddHostedService<Worker>();
                 });

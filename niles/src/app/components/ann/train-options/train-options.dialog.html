@@ -15,11 +15,6 @@
                 <input matInput type="number" placeholder="Момент" formControlName="moment">
             </mat-form-field>
         </div>
-        <label>Функция активации:</label>
-        <mat-radio-group formControlName="activateFunction" fxLayout="column">
-            <mat-radio-button class="m-1" [value]="ActivateFunctions.Sigmoid"> Сигмоида </mat-radio-button>
-            <mat-radio-button class="m-1" [value]="ActivateFunctions.HyperbolicTangent"> Гиперболический тангенс </mat-radio-button>
-        </mat-radio-group>
         <div fxLayout="row" fxLayoutAlign="start space-between">
             <div formArrayName="inputs" fxLayout="column" fxFlex>
                 <h3>Входные данные</h3>

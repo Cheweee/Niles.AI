@@ -12,12 +12,10 @@ export class ActivateOptionsDialog {
         @Inject(MAT_DIALOG_DATA) public data: number) { }
 
     public form: FormGroup;
-    public ActivateFunctions = ActivateFunctions;
 
     public ngOnInit(): void {
         this.form = new FormGroup({
-            input: new FormControl(''),
-            activateFunction: new FormControl(ActivateFunctions.Sigmoid)
+            input: new FormControl('')
         });
     }
 
@@ -25,8 +23,7 @@ export class ActivateOptionsDialog {
         const input = this.mapNumberArrayFromString(this.form.controls.input.value);
 
         const options: NeuralNetworkActivateOptions = {
-            input: input,
-            activateFunction: this.form.controls.activateFunction.value
+            input: input
         };
 
         this.dialogRef.close(options);
